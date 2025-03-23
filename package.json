@@ -1,0 +1,33 @@
+{
+  "name": "breddit",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsx watch app.ts",
+    "db": "npx prisma db push",
+    "studio": "npx prisma studio"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@prisma/client": "^4.11.0",
+    "body-parser": "^1.20.1",
+    "cookie-parser": "^1.4.6",
+    "cookie-session": "^2.0.0",
+    "ejs": "^3.1.8",
+    "express": "^4.21.2",
+    "express-session": "^1.17.3",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.20",
+    "@types/express-session": "^1.17.9",
+    "@types/node": "^18.15.3",
+    "@types/passport": "^1.0.14",
+    "@types/passport-local": "^1.0.37",
+    "prisma": "^4.11.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.0.2"
+  }
+}

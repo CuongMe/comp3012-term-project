@@ -5,9 +5,10 @@ const PORT = process.env.PORT || 8000;
 
 const app = express();
 
+
 app.set("trust proxy", 1);
 app.set("view engine", "ejs");
-app.use(express.static("public"));npm install express
+app.use(express.static("public"));
 app.use(
   session({
     secret: "secret",

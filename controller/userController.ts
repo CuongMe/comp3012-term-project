@@ -1,23 +1,17 @@
-import * as db from "../fake-db";
+import * as db from "../prisma_db";
 
 export const getUserByEmailIdAndPassword = async (
   uname: string,
   password: string
 ) => {
-  let user = db.getUserByUsername(uname);
-  if (user) {
-    if (user.password === password) {
-      return user;
-    } else {
-      return null;
-    }
-  }
-};
-
-export const getUserById = async (id: number) => {
-  let user = db.getUser(id);
-  if (user) {
+  const user = await db.getUserByUsername(uname);   // ← add await
+  if (user && user.password === password) {
     return user;
   }
   return null;
+};
+
+export const getUserById = async (id: number) => {
+  const user = await db.getUser(id);                 // ← add await
+  return user ?? null;
 };

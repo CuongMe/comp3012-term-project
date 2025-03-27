@@ -1,6 +1,7 @@
 import { TComments, TPost, TPosts, TUsers, TVotes } from "./types";
 
-const users: TUsers = {
+
+export const users: TUsers = {
   1: {
     id: 1,
     uname: "alice",
@@ -23,7 +24,7 @@ const users: TUsers = {
   },
 };
 
-const posts: TPosts = {
+export const posts: TPosts = {
   101: {
     id: 101,
     title: "Mochido opens its new location in Coquitlam this week",
@@ -46,7 +47,7 @@ const posts: TPosts = {
   },
 };
 
-const comments: TComments = {
+export const comments: TComments = {
   9001: {
     id: 9001,
     post_id: 102,
@@ -56,7 +57,7 @@ const comments: TComments = {
   },
 };
 
-const votes: TVotes = [
+export const votes: TVotes = [
   { user_id: 2, post_id: 101, value: +1 },
   { user_id: 3, post_id: 101, value: +1 },
   { user_id: 4, post_id: 101, value: +1 },

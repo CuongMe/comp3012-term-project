@@ -83,11 +83,11 @@ All GET routes, unless otherwise specified, should `res.render` a template. All 
 - subs
 
   - `GET /subs/list`
-    - shows a list of all existing subs that have at least one post
-      - each entry is a link to the appropriate `GET /subs/show/:subname`
-      - sort them predictably somehow, either alphabetical or by-post-count or something, up to you
+    - shows a list of all existing subs that have at least one post✅
+      - each entry is a link to the appropriate `GET /subs/show/:subname`✅
+      - sort them predictably somehow, either alphabetical or by-post-count or something, up to you✅
   - `GET /subs/show/:subname`
-    - same as `GET /`, but filtered to only show posts that match the subname
+    - same as `GET /`, but filtered to only show posts that match the subname✅
 
 - individual posts
   - `GET /posts/show/:postid`

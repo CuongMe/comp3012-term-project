@@ -1,3 +1,12 @@
+declare global {
+  namespace Express {
+    interface User {
+      id: number;
+      uname: string;
+      password: string;
+    }
+  }
+}
 export type TPosts = {
   [key: number]: {
     id: number;

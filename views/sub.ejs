@@ -9,16 +9,27 @@
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"
     />
     <link href="/css/style.css" rel="stylesheet" />
-    <title>Sub posts</title>
+    <title>Sub Posts</title>
   </head>
   <body>
     <main>
       <div class="authOptions">
-        <h1>Sub Posts</h1>
+        <h1>Posts in <%= subname %></h1>
         <a role="button" href="/posts">Home</a>
       </div>
       <div>
-        <p>Implement this page yourself. It is from sub.ejs</p>
+        <% if (posts && posts.length > 0) { %>
+          <ul>
+            <% posts.forEach(post => { %>
+              <li>
+                <a href="/posts/show/<%= post.id %>"><%= post.title %></a>
+                <p><%= post.description %></p>
+              </li>
+            <% }); %>
+          </ul>
+        <% } else { %>
+          <p>No posts found in this subgroup.</p>
+        <% } %>
       </div>
     </main>
   </body>

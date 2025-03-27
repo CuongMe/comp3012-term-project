@@ -1,23 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"
-    />
-    <link href="/css/style.css" rel="stylesheet" />
-    <title>CreatePost</title>
-  </head>
-  <body>
-    <main>
-      <div class="authOptions">
-        <h1>Create Post</h1>
-        <a role="button" href="/posts">Home</a>
+<head>
+  <meta charset="UTF‑8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"/>
+  <link href="/css/style.css" rel="stylesheet"/>
+  <title>Create Post</title>
+</head>
+<body>
+  <main>
+    <div class="authOptions">
+      <h1>Create Post</h1>
+      <a role="button" href="/posts">Home</a>
+    </div>
+
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+    <form action="/posts/create" method="POST">
+      <label for="title">Title<span class="required">*</span></label>
+      <input type="text" id="title" name="title" value="<%= title || '' %>" required />
+
+      <label for="link">Link (optional)</label>
+      <input type="url" id="link" name="link" placeholder="https://example.com" value="<%= link || '' %>" />
+
+      <label for="description">Description (optional)</label>
+      <textarea id="description" name="description" rows="4"><%= description || '' %></textarea>
+
+      <label for="subgroup">Subgroup<span class="required">*</span></label>
+      <input type="text" id="subgroup" name="subgroup" value="<%= subgroup || '' %>" required />
+
+      <div class="form-actions">
+        <button type="submit">Create Post</button>
+        <a href="/posts" class="button secondary">Cancel</a>
       </div>
-      <p>Implement this yourself. It comes from createPost.ejs</p>
-    </main>
-  </body>
+    </form>
+  </main>
+</body>
 </html>

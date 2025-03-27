@@ -18,7 +18,17 @@
         <a role="button" href="/posts">Home</a>
       </div>
       <div>
-        <p>Implement this page yourself. It is from subs.ejs</p>
+        <% if (subs && subs.length > 0) { %>
+          <ul>
+            <% subs.forEach(sub => { %>
+              <li>
+                <a href="/subs/show/<%= sub %>"><%= sub %></a>
+              </li>
+            <% }); %>
+          </ul>
+        <% } else { %>
+          <p>No subgroups available.</p>
+        <% } %>
       </div>
     </main>
   </body>

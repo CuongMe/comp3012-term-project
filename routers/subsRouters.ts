@@ -1,4 +1,4 @@
-// const { ensureAuthenticated } = require("../middleware/checkAuth");
+const { ensureAuthenticated } = require("../middleware/checkAuth");
 import express from "express";
 import * as db from "../prisma_db";
 const router = express.Router();

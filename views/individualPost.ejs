@@ -4,22 +4,145 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css" />
     <link href="/css/style.css" rel="stylesheet" />
-    <title>Post</title>
+    <title><%= post.title %></title>
   </head>
   <body>
     <main>
+      <!-- Header / Navigation -->
       <div class="authOptions">
         <h1>View Post</h1>
         <a role="button" href="/posts">Home</a>
       </div>
-      <div>
-        <p>Implement this page yourself. It is from individualPost.ejs</p>
+      <!-- Post Details Section -->
+      <article>
+        <h2>
+          <% if (post.link) { %>
+            <a href="<%= post.link %>"><%= post.title %></a>
+          <% } else { %>
+            <%= post.title %>
+          <% } %>
+        </h2>
+        <p>
+          Posted by <strong><%= post.creator.uname %></strong> on 
+          <%= new Date(Number(post.timestamp)).toLocaleString() %>
+        </p>
+        <p><%= post.description %></p>
+      </article>
+      <!-- Voting Section -->
+      <% if (user) { %>
+      <div class="voteContainer">
+        <% 
+          // Calculate net votes from post.votes array.
+          let netVotes = 0;
+          if (post.votes && post.votes.length) {
+            netVotes = post.votes.reduce((sum, vote) => sum + vote.value, 0);
+          }
+          // Determine if the logged-in user has voted on this post.
+          let currentVote = 0;
+          if (user && post.votes) {
+            const myVote = post.votes.find(vote => vote.userId === user.id);
+            if (myVote) {
+              currentVote = myVote.value;
+            }
+          }
+        %>
+        <div class="voteButtons">
+          <!-- Upvote Form -->
+          <form action="/posts/vote/<%= post.id %>" method="POST" style="display:inline">
+            <input type="hidden" name="setvoteto" value="<%= currentVote === 1 ? 0 : 1 %>" />
+            <button type="submit" class="<%= currentVote === 1 ? 'active' : '' %>">Up</button>
+          </form>
+          <!-- Downvote Form -->
+          <form action="/posts/vote/<%= post.id %>" method="POST" style="display:inline">
+            <input type="hidden" name="setvoteto" value="<%= currentVote === -1 ? 0 : -1 %>" />
+            <button type="submit" class="<%= currentVote === -1 ? 'active' : '' %>">Down</button>
+          </form>
+        </div>
+        <div class="netVotes">
+          <p>Votes: <%= netVotes %></p>
+        </div>
       </div>
+      <% } %> 
+      <!-- Inline Edit Form Section (Only for Post Creator) -->
+      <% if (user && post.creator && user.id === post.creator.id) { %>
+        <section id="editForm">
+          <h2>Edit Post</h2>
+          <form action="/posts/edit/<%= post.id %>" method="POST">
+            <div>
+              <label for="title">Title</label>
+              <input type="text" id="title" name="title" value="<%= post.title %>" required />
+            </div>
+            <div>
+              <label for="link">Link</label>
+              <input type="url" id="link" name="link" value="<%= post.link %>" />
+            </div>
+            <div>
+              <label for="description">Description</label>
+              <textarea id="description" name="description" rows="4" required><%= post.description %></textarea>
+            </div>
+            <div>
+              <label for="subgroup">Subgroup</label>
+              <input type="text" id="subgroup" name="subgroup" value="<%= post.subgroup %>" required />
+            </div>
+            <!-- Read-only information -->
+            <div>
+              <p>Created by: <strong><%= post.creator.uname %></strong></p>
+              <p>Created on: <%= new Date(Number(post.timestamp)).toLocaleString() %></p>
+            </div>
+            <div>
+              <button type="submit">Save Changes</button>
+              <!-- Use a Cancel link to revert to the normal view -->
+              <a role="button" href="/posts/show/<%= post.id %>">Cancel</a>
+            </div>
+          </form>
+        </section>
+      <% } %>
+      <!-- Delete Post Form (Only for Post Creator) -->
+      <% if (user && post.creator && user.id === post.creator.id) { %>
+        <form action="/posts/delete/<%= post.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this post?');">
+          <input type="hidden" name="action" value="delete" />
+          <button type="submit">Delete Post</button>
+        </form>
+      <% } %>    
+      <!-- Comments Section -->
+      <section id="comments">
+        <h3>Comments (<%= post.comments.length %>)</h3>
+        <% if (post.comments.length > 0) { %>
+          <ul>
+            <% post.comments.forEach(comment => { %>
+              <li>
+                <p><%= comment.description %></p>
+                <small>
+                  — <%= comment.user ? comment.user.uname : "Unknown" %>,
+                  <%= new Date(Number(comment.timestamp)).toLocaleString() %>
+                </small>
+                <% if (user && comment.user && user.id === comment.user.id) { %>
+                  <!-- Delete Comment Form -->
+                  <form action="/posts/comments/delete/<%= comment.id %>" method="POST" style="display:inline">
+                    <button type="submit">Delete</button>
+                  </form>
+                <% } %>
+              </li>
+            <% }) %>
+          </ul>
+        <% } else { %>
+          <p>No comments yet.</p>
+        <% } %>
+      </section>
+      <!-- New Comment Form -->
+      <% if (user) { %>
+        <section id="new-comment">
+          <h3>Add a Comment</h3>
+          <form action="/posts/comment-create/<%= post.id %>" method="POST">
+            <textarea name="description" rows="3" placeholder="Write your comment here..." required></textarea>
+            <button type="submit">Post Comment</button>
+          </form>
+        </section>
+      <% } else { %>
+        <p><a href="/auth/login">Log in</a> to add a comment.</p>
+      <% } %>
     </main>
   </body>
 </html>

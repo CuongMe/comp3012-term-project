@@ -4,7 +4,7 @@ export const getUserByEmailIdAndPassword = async (
   uname: string,
   password: string
 ) => {
-  const user = await db.getUserByUsername(uname);   // ← add await
+  const user = await db.getUserByUsername(uname);   
   if (user && user.password === password) {
     return user;
   }
@@ -12,6 +12,6 @@ export const getUserByEmailIdAndPassword = async (
 };
 
 export const getUserById = async (id: number) => {
-  const user = await db.getUser(id);                 // ← add await
+  const user = await db.getUser(id);                 
   return user ?? null;
 };

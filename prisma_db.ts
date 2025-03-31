@@ -3,6 +3,7 @@ import { PrismaClient, User, Post, Comment, Vote } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+
 // Users
 export async function getUser(id: number): Promise<User | null> {
   return prisma.user.findUnique({ where: { id } });
@@ -22,7 +23,7 @@ export async function getCommentsForPost(postId: number): Promise<Comment[]> {
   return prisma.comment.findMany({
     where: { postId },
     orderBy: { timestamp: 'asc' },
-    include: { user: true }, // include creator info
+    include: { user: true },
   });
 }
 
@@ -41,6 +42,19 @@ export async function addComment(
   });
 }
 
+export async function getComment(id: number): Promise<Comment | null> {
+  return prisma.comment.findUnique({
+    where: { id },
+    include: { user: true },
+  });
+}
+
+export async function deleteComment(id: number): Promise<Comment> {
+  return prisma.comment.delete({
+    where: { id },
+  });
+}
+
 // Posts
 export async function decoratePost(post: Post): Promise<any> {
   const creator = await getUser(post.creator);
@@ -49,9 +63,6 @@ export async function decoratePost(post: Post): Promise<any> {
   return { ...post, creator, votes, comments };
 }
 
-/**
- * Get posts with an optional subgroup filter.
- */
 export async function getPosts(n = 5, sub?: string): Promise<Post[]> {
   const whereClause = sub ? { subgroup: sub } : {};
   return prisma.post.findMany({
@@ -112,4 +123,37 @@ export async function getSubs(): Promise<string[]> {
   const subs = Array.from(new Set(posts.map(post => post.subgroup)));
   subs.sort();
   return subs;
+}
+
+// Voting
+export async function votePost(postId: number, userId: number, value: number) {
+  try {
+    if (value === 0) {
+      return await prisma.vote.delete({
+        where: {
+          userId_postId: {
+            userId,
+            postId,
+          },
+        },
+      });
+    } else {
+      return await prisma.vote.upsert({
+        where: {
+          userId_postId: {
+            userId,
+            postId,
+          },
+        },
+        update: { value },
+        create: {
+          userId,
+          postId,
+          value,
+        },
+      });
+    }
+  } catch (err) {
+    throw err;
+  }
 }

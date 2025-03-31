@@ -19,11 +19,26 @@ router.get("/create", ensureAuthenticated, (req, res) => {
 
 router.post("/create", ensureAuthenticated, async (req, res) => {
   const { title, link, description, subgroup } = req.body;
-
+  
+  // Validate: Must have at least a link or description, and subgroup is required.
   if ((!link?.trim() && !description?.trim()) || !subgroup?.trim()) {
     return res.status(400).render("createPosts", {
       error: "You must supply a subgroup and at least a link or description.",
-      title, link, description, subgroup
+      title, link, description, subgroup,
+      user: req.user,
+    });
+  }
+
+  try {
+    const creatorId = req.user!.id;
+    const newPost = await db.addPost(title, link, creatorId, description, subgroup);
+    res.redirect(`/posts/show/${newPost.id}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("createPosts", {
+      error: "Error creating post",
+      title, link, description, subgroup,
+      user: req.user,
     });
   }
 });
@@ -46,6 +61,7 @@ router.get("/show/:postid", async (req, res) => {
   }
 });
 
+// GET /posts/edit/:postid - Render the edit form for a post.
 router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
   const { postid } = req.params;
   const postIdNum = parseInt(postid, 10);
@@ -57,19 +73,18 @@ router.get("/edit/:postid", ensureAuthenticated, async (req, res) => {
     if (!post) {
       return res.status(404).send("Post not found");
     }
-    if (!req.user) {
-      return res.status(401).send("You must be logged in to create a post.");
-    }
-    if (post.creator?.id !== req.user.id) {
+    // Only allow the post creator to edit.
+    if (post.creator?.id !== req.user!.id) {
       return res.status(403).send("Not authorized to edit this post");
     }
-    res.render("editPost", { post });
+    res.render("editPost", { post, user: req.user });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving post for editing");
   }
 });
 
+// POST /posts/edit/:postid - Process updates to a post.
 router.post("/edit/:postid", ensureAuthenticated, async (req, res) => {
   const { postid } = req.params;
   const postIdNum = parseInt(postid, 10);
@@ -82,10 +97,7 @@ router.post("/edit/:postid", ensureAuthenticated, async (req, res) => {
     if (!post) {
       return res.status(404).send("Post not found");
     }
-    if (!req.user) {
-      return res.status(401).send("You must be logged in to create a post.");
-    }
-    if (post.creator?.id !== req.user.id) {
+    if (post.creator?.id !== req.user!.id) {
       return res.status(403).send("Not authorized to edit this post");
     }
     await db.editPost(postIdNum, { title, link, description, subgroup });
@@ -178,5 +190,50 @@ router.post(
     }
   }
 );
+
+router.post("/comments/delete/:commentid", ensureAuthenticated, async (req, res) => {
+  const commentId = parseInt(req.params.commentid, 10);
+  if (isNaN(commentId)) {
+    return res.status(400).send("Invalid comment ID");
+  }
+  try {
+    const comment = await db.getComment(commentId);
+    if (!comment) {
+      return res.status(404).send("Comment not found");
+    }
+    if (comment.creator !== req.user!.id) {
+      return res.status(403).send("Not authorized to delete this comment");
+    }
+    await db.deleteComment(commentId);
+    res.redirect(`/posts/show/${comment.postId}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting comment");
+  }
+});
+
+///Part 2 - Voting on posts///
+router.post("/vote/:postid", ensureAuthenticated, async (req, res) => {
+  const { postid } = req.params;
+  const postIdNum = parseInt(postid, 10);
+  const { setvoteto } = req.body;
+  
+  if (isNaN(postIdNum)) {
+    return res.status(400).send("Invalid post ID");
+  }
+  
+  const voteValue = Number(setvoteto);
+  if (![1, -1, 0].includes(voteValue)) {
+    return res.status(400).send("Invalid vote value");
+  }
+  
+  try {
+    await db.votePost(postIdNum, req.user!.id, voteValue);
+    res.redirect(`/posts/show/${postIdNum}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error processing vote");
+  }
+});
 
 export default router;

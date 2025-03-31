@@ -91,35 +91,35 @@ All GET routes, unless otherwise specified, should `res.render` a template. All 
 
 - individual posts
   - `GET /posts/show/:postid`
-    - shows post title, post link, timestamp, and creator
-    - also has a list of _all comments_ related to this post
-      - each of these should show the comment description, creator, and timestamp
-      - optionally, each comment could have a link to delete it
-    - if you're logged in, a form for commenting should show
+    - shows post title, post link, timestamp, and creator ✅
+    - also has a list of _all comments_ related to this post✅
+      - each of these should show the comment description, creator, and timestamp✅
+      - optionally, each comment could have a link to delete it✅
+    - if you're logged in, a form for commenting should show✅
   - `GET /posts/create`
-    - form for creating a new post
+    - form for creating a new post✅
   - `POST /posts/create`
-    - processes the creation
-    - doesn't allow invalid creations, for example if there's no link and also no description
+    - processes the creation✅
+    - doesn't allow invalid creations, for example if there's no link and also no description✅
       - (no-link is okay if you want to do that, though)
-    - every post must have a "sub", but it can be any string, including any string not previously used
-      - so if the sub already exists, connect this post to that sub
-      - but if the sub doesn't already exist, make a new sub!
-    - when finished redirects to the post just created
+    - every post must have a "sub", but it can be any string, including any string not previously used✅
+      - so if the sub already exists, connect this post to that sub✅
+      - but if the sub doesn't already exist, make a new sub!✅
+    - when finished redirects to the post just created✅
   - `GET /posts/edit/:postid`
-    - form for editing an existing post
-    - please think for a moment about which parts of a post should be editable, and which should not
-    - Shouldn't load unless you're logged in _as the correct user_
+    - form for editing an existing post✅
+    - please think for a moment about which parts of a post should be editable, and which should not✅
+    - Shouldn't load unless you're logged in _as the correct user_✅
   - `POST /posts/edit/:postid`
-    - redirect back to the post when done
+    - redirect back to the post when done✅
   - `GET /posts/deleteconfirm/:postid`
-    - form for confirming delete of an existing post
-    - shouldn't load unless you're logged in _as the correct user_
+    - form for confirming delete of an existing post✅
+    - shouldn't load unless you're logged in _as the correct user_✅
   - `POST /posts/delete/:postid`
-    - if cancelled, redirect back to the post
-    - if successful, redirect back to the _sub that the post belonged to_
+    - if cancelled, redirect back to the post✅
+    - if successful, redirect back to the _sub that the post belonged to_✅
   - `POST /posts/comment-create/:postid`
-    - remember how `GET /posts/show/:postid` has a form for comments? It submits to here.
+    - remember how `GET /posts/show/:postid` has a form for comments? It submits to here.✅
 
 #### Voting
 
@@ -137,7 +137,7 @@ If I click the already-voted on button, that should cancel my vote. So I should 
 
 So you'll need to add at least this route:
 
-- `POST /posts/vote/:postid/`
-  - uses a body field `setvoteto` to set vote to +1, -1, or 0, overriding previous vote
-  - redirects back to `GET /posts/show/:postid`
+- `POST /posts/vote/:postid/`✅
+  - uses a body field `setvoteto` to set vote to +1, -1, or 0, overriding previous vote✅
+  - redirects back to `GET /posts/show/:postid`✅
 "# comp3012-term-project" 

@@ -40,7 +40,7 @@ passport.deserializeUser(async (id: number, done) => {
   }
 });
 
-passport.use(localLogin);
+
 
 passport.use(localLogin);
 export default passport.use(localLogin);
